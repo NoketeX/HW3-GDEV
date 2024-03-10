@@ -2,6 +2,8 @@
 #include <raymath.h>
 
 #include "Enemy.hpp"
+#include "Player.hpp"
+
 
 void Enemy::Update(float delta_time) {
 	current_state->Update(*this, delta_time);
@@ -21,12 +23,20 @@ void Enemy::SetState(EnemyState* new_state) { //We can define things outside of 
 	current_state->Enter(*this);
 }
 
-//Defining the player constructor
-Enemy::Enemy(Vector2 position, float spd) {
+//Defining the enemy constructor
+
+Enemy::Enemy(Vector2 position, Vector2 direction, float spd, float rad, Player p) {
 	pos = position;
 	s = spd;
+	d = direction;
+	r = rad;
+	player_pos = p.pos;
+	player_s = p.s;
+	player_d = p.d;
 	SetState(&wandering);
 }
+
+
 
 //Editing the states of the Enemy
 void EnemyWandering::Enter(Enemy& e) {
@@ -34,6 +44,32 @@ void EnemyWandering::Enter(Enemy& e) {
 }
 
 void EnemyWandering::Update(Enemy& e, float delta_time) {
+	int number = GetRandomValue(1, 4);
+	if (number == 1) {
+		e.d.y = -1;
+		e.pos.y += (e.s * e.d.y)  * delta_time;
+	}
+
+	if (number == 2) {
+		e.d.y = 1;
+		e.pos.y += (e.s * e.d.y) * delta_time;
+	}
+
+	if (number == 3) {
+		e.d.x = -1;
+		e.pos.x += (e.s * e.d.x) * delta_time;
+	}
+
+	if (number == 4) {
+		e.d.x = 1;
+		e.pos.x += (e.s * e.d.x) * delta_time;
+	}
+
+	if(){
+		e.SetState(&e.chase);
+	} // coliding with circle, then change state to chase
+	
+
 }
 
 void EnemyChase::Enter(Enemy& e) {
@@ -41,21 +77,58 @@ void EnemyChase::Enter(Enemy& e) {
 }
 
 void EnemyChase::Update(Enemy& e, float delta_time) {
-
+	if(e.player_pos.x >= e.pos.x && e.player_pos.y>= e.pos.y){
+		e.pos.x+= (e.player_pos.x - e.pos.x) * e.s  * delta_time;
+		e.pos.y+= (e.player_pos.y - e.pos.y) * e.s  * delta_time;
+	} // player is to the right and below the enemey
+	else if(e.player_pos.x >= e.pos.x && e.player_pos.y<= e.pos.y){
+		e.pos.x+= (e.player_pos.x - e.pos.x) * e.s  * delta_time;
+		e.pos.y-= (e.pos.y - e.player_pos.y) * e.s  * delta_time;
+	}// player is to the right and above the enemey
+	else if(e.player_pos.x <= e.pos.x && e.player_pos.y<= e.pos.y){
+		e.pos.x-= (e.pos.x - e.player_pos.x ) * e.s  * delta_time;
+		e.pos.y-= (e.pos.y - e.player_pos.y) * e.s  * delta_time;
+	}// player is to the left and above the enemey
+	else if(e.player_pos.x <= e.pos.x && e.player_pos.y>= e.pos.y){
+		e.pos.x-= (e.pos.x - e.player_pos.x ) * e.s  * delta_time;
+		e.pos.y+= (e.player_pos.y - e.pos.y) * e.s  * delta_time;
+	}// player is to the left and below the enemey
+	else{
+		e.SetState(&e.ready);
+	}
+	
+	
 }
 
 void EnemyReady::Enter(Enemy& e) {
 	e.c = ORANGE;
+	counter = 0.170;
 }
 
 void EnemyReady::Update(Enemy& e, float delta_time) {
-	
+	counter -= delta_time;
+	if(counter==0){
+		e.SetState(&e.attack);
+	}
 }
 
 void EnemyAttack::Enter(Enemy& e) {
 	e.c = RED;
+	counter = 0.170;
 }
 
 void EnemyAttack::Update(Enemy& e, float delta_time) {
+		counter -= delta_time;
+		e.pos.x += ((e.s * (e.player_pos.x - e.pos.x)) * 2) * delta_time;
+		e.pos.y += ((e.s * (e.player_pos.x - e.pos.x)) * 2) * delta_time; //rush towards rge position of the player
+
+	if(e.player_pos.x == e.player_pos.x && e.player_pos.y == e.player_pos.x){
+		e.player_hp-=2;
+		e.SetState(&e.chase);
+	}
+	else{
+		e.SetState(&e.chase);
+	}
+		
 	
 }

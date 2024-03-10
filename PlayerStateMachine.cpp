@@ -107,6 +107,7 @@ void PlayerAttack::Enter(Player& p) {
 //Defining the update function of the attack state
 void PlayerAttack::Update(Player& p, float delta_time) {
 	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+		
 		p.SetState(&p.idle);
 	}
 }
