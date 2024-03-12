@@ -20,6 +20,9 @@ public:
 class EnemyWandering : public EnemyState {
 public:
 	float counter;
+  float time;
+  float randx, randy;
+
 	void Enter(Enemy& e);
 	void Update(Enemy& e, float delta_time);
 };

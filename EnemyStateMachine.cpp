@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <raymath.h>
+#include <iostream>
 
 #include "Enemy.hpp"
 #include "Player.hpp"
@@ -36,38 +37,29 @@ Enemy::Enemy(Vector2 position, Vector2 direction, float spd, float rad, Player p
 	SetState(&wandering);
 }
 
-
-
 //Editing the states of the Enemy
 void EnemyWandering::Enter(Enemy& e) {
 	e.c = PINK;
+  counter = 0;
+  randx = 0;
+  randy = 0;
 }
 
-void EnemyWandering::Update(Enemy& e, float delta_time) {
-	int number = GetRandomValue(1, 4);
-	if (number == 1) {
-		e.d.y = -1;
-		e.pos.y += (e.s * e.d.y)  * delta_time;
-	}
+void EnemyWandering::Update(Enemy& e, float delta_time){
+  counter += delta_time;
+  if(counter >= 2){
+    e.pos = Vector2Add(e.pos, Vector2Scale({randx, randy}, 30.0f * delta_time));
+  } 
+  if(counter >= 5){
+    randx = GetRandomValue(-1, 1);
+    randy = GetRandomValue(-1, 1);
+    counter = 0;
+  }
+  
 
-	if (number == 2) {
-		e.d.y = 1;
-		e.pos.y += (e.s * e.d.y) * delta_time;
-	}
-
-	if (number == 3) {
-		e.d.x = -1;
-		e.pos.x += (e.s * e.d.x) * delta_time;
-	}
-
-	if (number == 4) {
-		e.d.x = 1;
-		e.pos.x += (e.s * e.d.x) * delta_time;
-	}
-
-	if(){
-		e.SetState(&e.chase);
-	} // coliding with circle, then change state to chase
+//	if(CheckCollisionCircles(player.pos, player.rad, e.)){
+//		e.SetState(&e.chase);
+//	} // coliding with circle, then change state to chase
 	
 
 }
