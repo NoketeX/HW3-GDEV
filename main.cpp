@@ -17,8 +17,8 @@ int main() {
 	InitWindow(800, 600, "State Machine");
 
 	Player p({400, 300}, {0, 0}, 20, 300);
-	Enemy e({200, 200}, {0,0}, 20, 100, p);
-	Enemy e2({600, 600},{0,0}, 20, 100, p);
+	Enemy e({200, 200}, {0,0}, 20, 100, &p);
+	Enemy e2({600, 600},{0,0}, 20, 100, &p);
 	//Enemy::Enemy(Vector2 position, Vector2 direction, float rad, float spd, Player p)
 
 	//Setting up camera

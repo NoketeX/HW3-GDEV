@@ -16,24 +16,26 @@ void Enemy::Draw() {
 	DrawCircleLines(pos.x+20, pos.y+20, 100, BLUE);
 	DrawCircleLines(pos.x+20, pos.y+20, 180, GREEN);
 }
+// https://www.youtube.com/watch?v=b6OvrRbGU68
 
 //Defining the SetState function
 void Enemy::SetState(EnemyState* new_state) { //We can define things outside of the class
 	//Where you assign the new state
 	current_state = new_state;
 	current_state->Enter(*this);
-}
+} 
 
 //Defining the enemy constructor
 
-Enemy::Enemy(Vector2 position, Vector2 direction, float spd, float rad, Player p) {
+Enemy::Enemy(Vector2 position, Vector2 direction, float spd, float rad, Player* p) {
 	pos = position;
 	s = spd;
 	d = direction;
 	r = rad;
-	player_pos = p.pos;
-	player_s = p.s;
-	player_d = p.d;
+	player_pos = p->pos;
+	player_s = p->s;
+	player_d = p->d;
+  player = p;
 	SetState(&wandering);
 }
 
@@ -54,6 +56,9 @@ void EnemyWandering::Update(Enemy& e, float delta_time){
     randx = GetRandomValue(-1, 1);
     randy = GetRandomValue(-1, 1);
     counter = 0;
+  }
+  if(CheckCollisionCircles(e.pos, e.r, e.player->pos, e.player->r)){
+    e.SetState(&e.chase);
   }
   
 
