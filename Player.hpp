@@ -55,7 +55,8 @@ public:
 	Vector2 d; //For direction
 	float r;
 	Color c;
-	int hp;
+	int hp = 20;
+  float invframes;
 
 	float s;
 
@@ -64,13 +65,14 @@ public:
 	void Update(float delta_time); //Updates player per frame
 	void Draw(); //Draws the player
 	void SetState(playerState* new_state); //Accepts state, which changes the state of the player
+  void TakeDamage(int damage);
 
 	PlayerIdle idle;
 	PlayerMoving moving;
 	PlayerAttack attack;
 	PlayerBlock block;
 	PlayerDodge dodge;
-
+ 
 private:
 	playerState* current_state;
 };

@@ -58,12 +58,6 @@ public:
 	int hp;
 	float s;
 
-	Vector2 player_pos;
-	Vector2 player_d; //For direction
-	float player_r;
-	int player_hp;
-	float player_s;
-  
 	Enemy(Vector2 pos, Vector2 direction, float rad, float spd, Player* p); //Constructs the enemy
   Player* player;
 	void Update(float delta_time); //Updates player per frame

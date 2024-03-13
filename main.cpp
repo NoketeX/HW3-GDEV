@@ -14,7 +14,7 @@ int camType;
 Camera2D camera_view = {0};
 
 int main() {
-	InitWindow(800, 600, "State Machine");
+	InitWindow(1280, 720, "Castro_Hung_Taino_Homework03");
 
 	Player p({400, 300}, {0, 0}, 20, 300);
 	Enemy e({200, 200}, {0,0}, 20, 100, &p);
@@ -23,7 +23,7 @@ int main() {
 
 	//Setting up camera
 	camera_view.target = {p.pos.x, p.pos.y};
-	camera_view.offset = {400, 300};
+	camera_view.offset = {1280/2, 720/2};
 	camera_view.zoom = 1.0f;
 
 	while(!WindowShouldClose()) {

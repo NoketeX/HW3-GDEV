@@ -2,7 +2,6 @@
 #include <raymath.h>
 
 #include "Player.hpp"
-
 //Where we will define everything that is in the Player header file
 
 void Player::Update(float delta_time) { //We can define things outside of the class
@@ -18,6 +17,26 @@ void Player::SetState(playerState* new_state) { //We can define things outside o
 	//Where you assign the new state
 	current_state = new_state;
 	current_state->Enter(*this);
+}
+
+void Player::TakeDamage(int damage){
+  if(current_state == &idle){
+    hp -= damage;
+  }
+  if(current_state == &moving){
+    hp -= damage;
+  }
+  if(current_state == &attack){
+    hp -= damage;
+  }
+  if(current_state == &block){
+    damage = damage / 2;
+    hp -= damage;
+  }
+  if(current_state == &dodge){
+    damage = 0;
+    hp -= damage;
+  }
 }
 
 //Defining the player constructor
@@ -47,6 +66,8 @@ void PlayerIdle::Update(Player& p, float delta_time) { //Set color, set cooldown
 	if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
 		p.SetState(&p.block);
 	}
+
+  p.invframes -= delta_time;
 }
 
 //Defining the enter function of the moving state
@@ -97,6 +118,7 @@ void PlayerMoving::Update(Player& p, float delta_time) { //Set color, set cooldo
 	if (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_S) && !IsKeyDown(KEY_D)) {
 		p.SetState(&p.idle);
 	}
+  p.invframes -= delta_time;
 }
 
 //Defining the enter function of the attack state
@@ -110,6 +132,7 @@ void PlayerAttack::Update(Player& p, float delta_time) {
 		
 		p.SetState(&p.idle);
 	}
+  p.invframes -= delta_time;
 }
 
 //Defining the enter function of the block state
@@ -122,6 +145,7 @@ void PlayerBlock::Update(Player& p, float delta_time) {
 	if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
 		p.SetState(&p.idle);
 	}
+  p.invframes -= delta_time;
 }
 
 //Defining the enter function of the dodge state
@@ -138,8 +162,9 @@ void PlayerDodge::Update(Player& p, float delta_time) {
 	p.pos.x += ((p.s * p.d.x) * 2) * delta_time;
 	p.pos.y += ((p.s * p.d.y) * 2) * delta_time;
 
+  p.invframes -= delta_time;
 	if (counter <= 0) {
 		p.SetState(&p.idle);
 	}
-
 }
+

@@ -12,9 +12,9 @@ void Enemy::Update(float delta_time) {
 
 void Enemy::Draw() { 
 	DrawRectangleV(pos, {40, 40}, c);
-	DrawCircleLines(pos.x+20, pos.y+20, 60, RED);
-	DrawCircleLines(pos.x+20, pos.y+20, 100, BLUE);
-	DrawCircleLines(pos.x+20, pos.y+20, 180, GREEN);
+	DrawCircleLines(pos.x+20, pos.y+20, 60, RED); // Attack
+	DrawCircleLines(pos.x+20, pos.y+20, 100, BLUE); // Detection 
+	DrawCircleLines(pos.x+20, pos.y+20, 180, GREEN); // Aggro
 }
 // https://www.youtube.com/watch?v=b6OvrRbGU68
 
@@ -32,9 +32,6 @@ Enemy::Enemy(Vector2 position, Vector2 direction, float spd, float rad, Player* 
 	s = spd;
 	d = direction;
 	r = rad;
-	player_pos = p->pos;
-	player_s = p->s;
-	player_d = p->d;
   player = p;
 	SetState(&wandering);
 }
@@ -48,25 +45,23 @@ void EnemyWandering::Enter(Enemy& e) {
 }
 
 void EnemyWandering::Update(Enemy& e, float delta_time){
-  counter += delta_time;
+  counter += delta_time;  
+  if(CheckCollisionCircleRec(e.player->pos, e.player->r, {e.pos.x, e.pos.y, 40, 40}) && e.player->invframes <= 0){ 
+		e.player->TakeDamage(2);
+    e.player->invframes = 0.5f;
+  }
+
   if(counter >= 2){
-    e.pos = Vector2Add(e.pos, Vector2Scale({randx, randy}, 30.0f * delta_time));
+    e.pos = Vector2Add(e.pos, Vector2Scale({randx, randy}, e.s * delta_time / 2.0f));
   } 
   if(counter >= 5){
     randx = GetRandomValue(-1, 1);
     randy = GetRandomValue(-1, 1);
     counter = 0;
   }
-  if(CheckCollisionCircles(e.pos, e.r, e.player->pos, e.player->r)){
+  if(CheckCollisionCircles({e.pos.x + 20, e.pos.y + 20}, 100, e.player->pos, e.player->r)){
     e.SetState(&e.chase);
   }
-  
-
-//	if(CheckCollisionCircles(player.pos, player.rad, e.)){
-//		e.SetState(&e.chase);
-//	} // coliding with circle, then change state to chase
-	
-
 }
 
 void EnemyChase::Enter(Enemy& e) {
@@ -74,29 +69,21 @@ void EnemyChase::Enter(Enemy& e) {
 }
 
 void EnemyChase::Update(Enemy& e, float delta_time) {
-	if(e.player_pos.x >= e.pos.x && e.player_pos.y>= e.pos.y){
-		e.pos.x+= (e.player_pos.x - e.pos.x) * e.s  * delta_time;
-		e.pos.y+= (e.player_pos.y - e.pos.y) * e.s  * delta_time;
-	} // player is to the right and below the enemey
-	else if(e.player_pos.x >= e.pos.x && e.player_pos.y<= e.pos.y){
-		e.pos.x+= (e.player_pos.x - e.pos.x) * e.s  * delta_time;
-		e.pos.y-= (e.pos.y - e.player_pos.y) * e.s  * delta_time;
-	}// player is to the right and above the enemey
-	else if(e.player_pos.x <= e.pos.x && e.player_pos.y<= e.pos.y){
-		e.pos.x-= (e.pos.x - e.player_pos.x ) * e.s  * delta_time;
-		e.pos.y-= (e.pos.y - e.player_pos.y) * e.s  * delta_time;
-	}// player is to the left and above the enemey
-	else if(e.player_pos.x <= e.pos.x && e.player_pos.y>= e.pos.y){
-		e.pos.x-= (e.pos.x - e.player_pos.x ) * e.s  * delta_time;
-		e.pos.y+= (e.player_pos.y - e.pos.y) * e.s  * delta_time;
-	}// player is to the left and below the enemey
-	else{
+  if(CheckCollisionCircleRec(e.player->pos, e.player->r, {e.pos.x, e.pos.y, 40, 40}) && e.player->invframes <= 0){ 
+		e.player->TakeDamage(2);
+    e.player->invframes = 0.5f;
+  }
+
+	if(CheckCollisionCircles({e.pos.x + 20, e.pos.y + 20}, 60, e.player->pos, e.player->r)){
 		e.SetState(&e.ready);
 	}
-	
-	
+  if(CheckCollisionCircles({e.pos.x + 20, e.pos.y + 20}, 180, e.player->pos, e.player->r) == false){
+    e.SetState(&e.wandering);
+  }
+//  else if() check if player is outside of the 180 circle
 }
 
+//Enemy is preparing to attack
 void EnemyReady::Enter(Enemy& e) {
 	e.c = ORANGE;
 	counter = 0.170;
@@ -104,28 +91,33 @@ void EnemyReady::Enter(Enemy& e) {
 
 void EnemyReady::Update(Enemy& e, float delta_time) {
 	counter -= delta_time;
-	if(counter==0){
+  if(CheckCollisionCircleRec(e.player->pos, e.player->r, {e.pos.x, e.pos.y, 40, 40}) && e.player->invframes <= 0){ 
+		e.player->TakeDamage(2);
+    e.player->invframes = 0.5f;
+  }
+
+	if(counter<=0){
 		e.SetState(&e.attack);
 	}
 }
 
 void EnemyAttack::Enter(Enemy& e) {
 	e.c = RED;
-	counter = 0.170;
+  counter = 0.170;
 }
 
 void EnemyAttack::Update(Enemy& e, float delta_time) {
-		counter -= delta_time;
-		e.pos.x += ((e.s * (e.player_pos.x - e.pos.x)) * 2) * delta_time;
-		e.pos.y += ((e.s * (e.player_pos.x - e.pos.x)) * 2) * delta_time; //rush towards rge position of the player
+	counter -= delta_time;
+  if(CheckCollisionCircleRec(e.player->pos, e.player->r, {e.pos.x, e.pos.y, 40, 40}) && e.player->invframes <= 0){ 
+		e.player->TakeDamage(2);
+    e.player->invframes = 0.5f;
+  }
 
-	if(e.player_pos.x == e.player_pos.x && e.player_pos.y == e.player_pos.x){
-		e.player_hp-=2;
-		e.SetState(&e.chase);
-	}
-	else{
-		e.SetState(&e.chase);
-	}
-		
-	
+  if(counter >= 0){
+	  e.pos.x += ((e.s * (e.player->pos.x - e.pos.x)) * 2) * delta_time;
+	  e.pos.y += ((e.s * (e.player->pos.y - e.pos.y)) * 2) * delta_time; //rush towards rge position of the player
+  }
+  else if(counter <= 0){
+    e.SetState(&e.chase);
+  }
 }
