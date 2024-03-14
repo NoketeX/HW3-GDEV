@@ -4,7 +4,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-
 //You create classes and functions here, but definitions are done outside of the header
 
 class Player;
@@ -57,6 +56,7 @@ public:
 	Color c;
 	int hp = 20;
   float invframes;
+  float dmgrng = -1;
 
 	float s;
 

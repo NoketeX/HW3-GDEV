@@ -52,17 +52,20 @@ public:
 class Enemy {
 public:
 	Vector2 pos;
-	Vector2 d; //For direction
+  float angle = 0;
 	float r;
 	Color c;
-	int hp;
+	int hp = 20;
 	float s;
+  float dmgcount;
+  float dmgtimer;
 
-	Enemy(Vector2 pos, Vector2 direction, float rad, float spd, Player* p); //Constructs the enemy
+	Enemy(Vector2 pos, float rad, float spd, Player* p); //Constructs the enemy
   Player* player;
 	void Update(float delta_time); //Updates player per frame
 	void Draw(); //Draws the enemy
 	void SetState(EnemyState* new_state); //Accepts state, which changes the state of the enemy
+  void TakeDamage(int damage);
 
 	EnemyWandering wandering;
 	EnemyChase chase;

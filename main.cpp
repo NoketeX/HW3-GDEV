@@ -17,8 +17,8 @@ int main() {
 	InitWindow(1280, 720, "Castro_Hung_Taino_Homework03");
 
 	Player p({400, 300}, {0, 0}, 20, 300);
-	Enemy e({200, 200}, {0,0}, 20, 100, &p);
-	Enemy e2({600, 600},{0,0}, 20, 100, &p);
+	Enemy e({200, 200}, 20, 30, &p);
+	Enemy e2({600, 600},20, 30, &p);
 	//Enemy::Enemy(Vector2 position, Vector2 direction, float rad, float spd, Player p)
 
 	//Setting up camera

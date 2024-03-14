@@ -2,6 +2,8 @@
 #include <raymath.h>
 
 #include "Player.hpp"
+#include "Enemy.hpp"
+#include <iostream>
 //Where we will define everything that is in the Player header file
 
 void Player::Update(float delta_time) { //We can define things outside of the class
@@ -10,6 +12,7 @@ void Player::Update(float delta_time) { //We can define things outside of the cl
 
 void Player::Draw() { 
 	DrawCircleV(pos, r, c);
+  DrawCircleLines(pos.x, pos.y, dmgrng, PURPLE);
 }
 
 //Defining the SetState function
@@ -124,12 +127,13 @@ void PlayerMoving::Update(Player& p, float delta_time) { //Set color, set cooldo
 //Defining the enter function of the attack state
 void PlayerAttack::Enter(Player& p) {
 	p.c = RED;
+  p.dmgrng = 60;
 }
 
 //Defining the update function of the attack state
 void PlayerAttack::Update(Player& p, float delta_time) {
 	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-		
+    p.dmgrng = -1;
 		p.SetState(&p.idle);
 	}
   p.invframes -= delta_time;
@@ -142,7 +146,7 @@ void PlayerBlock::Enter(Player& p) {
 
 //Defining the update function of the block state
 void PlayerBlock::Update(Player& p, float delta_time) {
-	if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
+	if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) { 
 		p.SetState(&p.idle);
 	}
   p.invframes -= delta_time;
