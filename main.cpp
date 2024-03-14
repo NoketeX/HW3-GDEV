@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include <raymath.h>
+#include <vector>
 
 #include "PlayerStateMachine.cpp"
 #include "EnemyStateMachine.cpp"
@@ -15,12 +16,15 @@ Camera2D camera_view = {0};
 
 int main() {
 	InitWindow(1280, 720, "Castro_Hung_Taino_Homework03");
-
+  
+  std::vector<Enemy> enemies;
 	Player p({400, 300}, {0, 0}, 20, 300);
 	Enemy e({200, 200}, 20, 30, &p);
 	Enemy e2({600, 600},20, 30, &p);
 	//Enemy::Enemy(Vector2 position, Vector2 direction, float rad, float spd, Player p)
-
+  enemies.emplace_back(e);
+  enemies.emplace_back(e2);
+  
 	//Setting up camera
 	camera_view.target = {p.pos.x, p.pos.y};
 	camera_view.offset = {1280/2, 720/2};
