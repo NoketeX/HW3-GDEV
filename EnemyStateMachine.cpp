@@ -46,8 +46,8 @@ void EnemyWandering::Enter(Enemy& e) {
 	e.c = PINK;
   e.angle = 0;
   counter = 0;
-  randx = 0;
-  randy = 0;
+  randx = GetRandomValue(-20, 20);
+  randy = GetRandomValue(-20, 20);
 }
 
 void EnemyWandering::Update(Enemy& e, float delta_time){
@@ -67,12 +67,12 @@ void EnemyWandering::Update(Enemy& e, float delta_time){
     }
   }
 
-  if(counter >= 2){
+  if(counter >= 1){
     e.pos = Vector2Add(e.pos, Vector2Scale({randx, randy}, e.s * delta_time / 2.0f));
   } 
-  if(counter >= 5){
-    randx = GetRandomValue(-1, 1);
-    randy = GetRandomValue(-1, 1);
+  if(counter >= 3){
+    randx = GetRandomValue(-20, 20);
+    randy = GetRandomValue(-20, 20);
     counter = 0;
   }
   if(CheckCollisionCircles({e.pos.x + 20, e.pos.y + 20}, 100, e.player->pos, e.player->r)){
@@ -82,12 +82,13 @@ void EnemyWandering::Update(Enemy& e, float delta_time){
 
 void EnemyChase::Enter(Enemy& e) {
 	e.c = YELLOW;
+  e.s = 10;
 }
 
 void EnemyChase::Update(Enemy& e, float delta_time) {
   e.angle = Vector2Angle(e.player->pos,e.pos);
   Vector2 direction = Vector2Normalize(Vector2Subtract(e.player->pos, e.pos));
-  e.pos = Vector2Add(e.pos, Vector2Scale(direction, e.s * delta_time));
+  e.pos = Vector2Add(e.pos, Vector2Scale(direction, (e.s * 8) * delta_time));
   if(CheckCollisionCircleRec(e.player->pos, e.player->r, {e.pos.x, e.pos.y, 40, 40}) && e.player->invframes <= 0){ 
 		e.player->TakeDamage(2);
     e.player->invframes = 0.5f;
@@ -142,6 +143,7 @@ void EnemyReady::Update(Enemy& e, float delta_time) {
 
 void EnemyAttack::Enter(Enemy& e) {
 	e.c = RED;
+  e.s = 30;
   counter = 0.170;
 }
 

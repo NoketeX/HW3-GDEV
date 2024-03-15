@@ -13,6 +13,8 @@ void Player::Update(float delta_time) { //We can define things outside of the cl
 void Player::Draw() { 
 	DrawCircleV(pos, r, c);
   DrawCircleLines(pos.x, pos.y, dmgrng, PURPLE);
+
+  DrawText(TextFormat("%d", hp), pos.x-500, pos.y-300, 50, WHITE);
 }
 
 //Defining the SetState function
@@ -58,6 +60,7 @@ void PlayerIdle::Enter(Player& p) { //Set color, set cooldown timer, etc...; Onl
 
 //Defining the update function of the idle state
 void PlayerIdle::Update(Player& p, float delta_time) { //Set color, set cooldown timer, etc...; Only called once when entering the state
+
 	if (IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D)) {
 		p.SetState(&p.moving);
 	}
@@ -81,47 +84,51 @@ void PlayerMoving::Enter(Player& p) {
 //Defining the update function of the moving state
 void PlayerMoving::Update(Player& p, float delta_time) { //Set color, set cooldown timer, etc...; Only called once when entering the state
 
-	if (IsKeyDown(KEY_W)) {
-		p.d.y = -1;
-		p.pos.y += (p.s * p.d.y)  * delta_time;
+	if (p.hp > 0) {
+		if (IsKeyDown(KEY_W)) {
+			p.d.y = -1;
+			p.pos.y += (p.s * p.d.y)  * delta_time;
+		}
+
+		if (IsKeyDown(KEY_S)) {
+			p.d.y = 1;
+			p.pos.y += (p.s * p.d.y) * delta_time;
+		}
+
+		if (IsKeyDown(KEY_A)) {
+			p.d.x = -1;
+			p.pos.x += (p.s * p.d.x) * delta_time;
+		}
+
+		if (IsKeyDown(KEY_D)) {
+			p.d.x = 1;
+			p.pos.x += (p.s * p.d.x) * delta_time;
+		}
+
+		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+			p.SetState(&p.attack);
+		}
+
+		if (IsKeyPressed(KEY_SPACE)) {
+			p.SetState(&p.dodge);
+		}
+
+		//Setting direction to 0 when their respective directional keys are not being pressed
+		if (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D)) {
+			p.d.x = 0;
+		}
+
+		if (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S)) {
+			p.d.y = 0;
+		}
+
+		if (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_S) && !IsKeyDown(KEY_D)) {
+			p.SetState(&p.idle);
+		}
+	  p.invframes -= delta_time;
 	}
 
-	if (IsKeyDown(KEY_S)) {
-		p.d.y = 1;
-		p.pos.y += (p.s * p.d.y) * delta_time;
-	}
-
-	if (IsKeyDown(KEY_A)) {
-		p.d.x = -1;
-		p.pos.x += (p.s * p.d.x) * delta_time;
-	}
-
-	if (IsKeyDown(KEY_D)) {
-		p.d.x = 1;
-		p.pos.x += (p.s * p.d.x) * delta_time;
-	}
-
-	if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-		p.SetState(&p.attack);
-	}
-
-	if (IsKeyPressed(KEY_SPACE)) {
-		p.SetState(&p.dodge);
-	}
-
-	//Setting direction to 0 when their respective directional keys are not being pressed
-	if (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D)) {
-		p.d.x = 0;
-	}
-
-	if (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_S)) {
-		p.d.y = 0;
-	}
-
-	if (!IsKeyDown(KEY_W) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_S) && !IsKeyDown(KEY_D)) {
-		p.SetState(&p.idle);
-	}
-  p.invframes -= delta_time;
+	
 }
 
 //Defining the enter function of the attack state

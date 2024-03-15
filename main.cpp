@@ -32,8 +32,15 @@ int main() {
 
 	while(!WindowShouldClose()) {
 		float delta_time = GetFrameTime();
-
-		camera_view.target = {p.pos.x, p.pos.y};
+		
+		if (p.hp > 0) {
+			camera_view.target = {p.pos.x, p.pos.y};
+		} else if (p.hp <= 0) {
+			camera_view.target = {640, 360};
+		} else if ((e.hp <= 0) && (e2.hp <= 0)) {
+			camera_view.target = {640, 360};
+		}
+		
 
 		p.Update(delta_time);
 		e.Update(delta_time);
@@ -43,9 +50,20 @@ int main() {
 		BeginMode2D(camera_view);
 		ClearBackground(BLACK);
 
-		p.Draw();
-		e.Draw();
-		e2.Draw();
+		if (p.hp > 0) {
+			p.Draw();
+			if (e.hp > 0) {
+				e.Draw();
+			}
+
+			if (e2.hp > 0) {
+				e2.Draw();
+			}
+		} else if (p.hp <= 0) {
+			DrawText("You Lose!", (440), (260), 100, WHITE);
+		} else if ((e.hp <= 0) && (e2.hp <= 0)) {
+			DrawText("You Win!", (440), (260), 100, WHITE);
+		}
 
 		EndMode2D();
 		EndDrawing();
