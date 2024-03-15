@@ -1,5 +1,5 @@
 #include <raylib.h>
-#include <raymath.h>
+#include "raymath.h"
 #include <iostream>
 #include <cmath>
 
@@ -59,7 +59,7 @@ void EnemyWandering::Update(Enemy& e, float delta_time){
 
   e.dmgtimer -= delta_time;
     if(CheckCollisionCircleRec(e.player->pos, e.player->dmgrng, {e.pos.x, e.pos.y, 40, 40}) && e.dmgtimer <= 0.0f){
-      e.TakeDamage(2);
+      e.TakeDamage(20);
       e.dmgcount += 1;
       if(e.dmgcount == 2){
         e.dmgtimer = 2.0f;
@@ -96,7 +96,7 @@ void EnemyChase::Update(Enemy& e, float delta_time) {
 
  e.dmgtimer -= delta_time;
   if(CheckCollisionCircleRec(e.player->pos, e.player->dmgrng, {e.pos.x, e.pos.y, 40, 40}) && e.dmgtimer <= 0.0f){
-    e.TakeDamage(2);
+    e.TakeDamage(20);
     e.dmgcount += 1;
     if(e.dmgcount == 2){
       e.dmgtimer = 2.0f;
@@ -128,7 +128,7 @@ void EnemyReady::Update(Enemy& e, float delta_time) {
 
   e.dmgtimer -= delta_time;
   if(CheckCollisionCircleRec(e.player->pos, e.player->dmgrng, {e.pos.x, e.pos.y, 40, 40}) && e.dmgtimer <= 0.0f){
-    e.TakeDamage(2);
+    e.TakeDamage(20);
     e.dmgcount += 1;
     if(e.dmgcount == 2){
       e.dmgtimer = 2.0f;
@@ -157,7 +157,7 @@ void EnemyAttack::Update(Enemy& e, float delta_time) {
   
   e.dmgtimer -= delta_time;
   if(CheckCollisionCircleRec(e.player->pos, e.player->dmgrng, {e.pos.x, e.pos.y, 40, 40}) && e.dmgtimer <= 0.0f){
-    e.TakeDamage(2);
+    e.TakeDamage(20);
     e.dmgcount += 1;
     if(e.dmgcount == 2){
       e.dmgtimer = 2.0f;

@@ -2,7 +2,7 @@
 //Use melee; Create circle around player when it attacks
 
 #include <raylib.h>
-#include <raymath.h>
+#include "raymath.h"
 #include <vector>
 
 #include "PlayerStateMachine.cpp"
@@ -64,6 +64,7 @@ int main() {
 		} else if ((e.hp <= 0) && (e2.hp <= 0)) {
 			DrawText("You Win!", (440), (260), 100, WHITE);
 		}
+
 
 		EndMode2D();
 		EndDrawing();

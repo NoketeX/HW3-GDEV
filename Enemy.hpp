@@ -3,7 +3,7 @@
 
 #include "Player.hpp"
 #include <raylib.h>
-#include <raymath.h>
+#include "raymath.h"
 
 //You create classes and functions here, but definitions are done outside of the header
 
