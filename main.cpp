@@ -33,7 +33,7 @@ int main() {
 	while(!WindowShouldClose()) {
 		float delta_time = GetFrameTime();
 		
-		if (p.hp > 0) {
+		if ((p.hp > 0) && ((e.hp > 0) || (e2.hp > 0))) {
 			camera_view.target = {p.pos.x, p.pos.y};
 		} else if (p.hp <= 0) {
 			camera_view.target = {640, 360};
@@ -50,7 +50,7 @@ int main() {
 		BeginMode2D(camera_view);
 		ClearBackground(BLACK);
 
-		if (p.hp > 0) {
+		if ((p.hp > 0) && ((e.hp > 0) || (e2.hp > 0))) {
 			p.Draw();
 			if (e.hp > 0) {
 				e.Draw();
